@@ -18,10 +18,23 @@ public class ParseExcel implements ParseFile {
     public static final String DOG = "Собака";
     public static final String BIRG = "Птица";
 
-    public List<Animal> parse(MultipartFile file) {
-        List<Animal> animals = new ArrayList<>();
+    private List<Dog> dogs;
+    private List<Bird> birds;
+
+    public List<Dog> getDogs() {
+        return dogs;
+    }
+
+    public List<Bird> getBirds() {
+        return birds;
+    }
+
+
+    public void parse(MultipartFile file) {
+        dogs = new ArrayList<>();
+        birds = new ArrayList<>();
         Workbook workbook = getWorkbook(file);
-        return getAnimals(animals, workbook);
+        getAnimals(workbook);
     }
 
     private Workbook getWorkbook(MultipartFile file) {
@@ -47,7 +60,7 @@ public class ParseExcel implements ParseFile {
         return workbook;
     }
 
-    private List<Animal> getAnimals(List<Animal> animals, Workbook workbook) {
+    private void getAnimals( Workbook workbook) {
         Animal animal = null;
         Sheet sheet = workbook.getSheetAt(0);
         Iterator<Row> it = sheet.iterator();
@@ -57,31 +70,41 @@ public class ParseExcel implements ParseFile {
             Row row = it.next();
             Iterator<Cell> cells = row.iterator();
             while (cells.hasNext()) {
-                animal = getAnimal(animal, cells);
+                Cell cell = cells.next();
+
+                switch (cell.getStringCellValue()) {
+                    case DOG -> {
+                        animal = getDog(animal, cells);
+                        this.dogs.add((Dog) animal);
+                    }
+                    case BIRG -> {
+                        animal = getBird(animal, cells);
+                        this.birds.add((Bird) animal);
+
+                    }
+                }
+
             }
-            animals.add(animal);
         }
-        return animals;
+
     }
 
-    private Animal getAnimal(Animal animal, Iterator<Cell> cells) {
+    private Dog getDog(Animal animal, Iterator<Cell> cells) {
+        animal = new Dog();
         Cell cell = cells.next();
-        switch (cell.getStringCellValue()) {
-            case DOG -> {
-                animal = new Dog();
-                cell = cells.next();
-                animal.setName(cell.getStringCellValue());
-                cell = cells.next();
-                ((Dog) animal).setRunSpeed(cell.getStringCellValue());
-            }
-            case BIRG -> {
-                animal = new Bird();
-                cell = cells.next();
-                animal.setName(cell.getStringCellValue());
-                cell = cells.next();
-                ((Bird) animal).setFlightSpeed(BigDecimal.valueOf(cell.getNumericCellValue()));
-            }
-        }
-        return animal;
+        animal.setName(cell.getStringCellValue());
+        cell = cells.next();
+        ((Dog) animal).setRunSpeed(cell.getStringCellValue());
+        return (Dog) animal;
     }
+
+    private Bird getBird(Animal animal, Iterator<Cell> cells) {
+        animal = new Bird();
+        Cell cell = cells.next();
+        animal.setName(cell.getStringCellValue());
+        cell = cells.next();
+        ((Bird) animal).setFlightSpeed(BigDecimal.valueOf(cell.getNumericCellValue()));
+        return (Bird) animal;
+    }
+
 }

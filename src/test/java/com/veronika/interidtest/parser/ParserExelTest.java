@@ -26,7 +26,7 @@ public class ParserExelTest {
             e.printStackTrace();
         }
 
-        Assertions.assertNotNull( parseFile.parse(multipartFile));
+      //  Assertions.assertNotNull( parseFile.parse(multipartFile));
        // Assertions.assertEquals(25, parseFile.parse((MultipartFile) new File("example.xlsx")).size());
         //ReflectionUtilsTest.
 
