@@ -22,18 +22,17 @@ public class ServiceExcel implements ServiceFile {
     public void addFileDate(MultipartFile file) {
         ParseFile parseFile = new ParseExcel();
         parseFile.parse(file);
-        ((ParseExcel) parseFile).getDogs().forEach(dog -> {
+        parseFile.getDogs().forEach(dog -> {
             DogEntity dogEntity = new DogEntity();
             dogEntity.setName(dog.getName());
             dogEntity.setRunSpeed((dog).getRunSpeed());
             dogRepo.save(dogEntity);
         });
-        ((ParseExcel) parseFile).getBirds().forEach(bird -> {
+        parseFile.getBirds().forEach(bird -> {
             BirdEntity birdEntity = new BirdEntity();
             birdEntity.setName(bird.getName());
             birdEntity.setFlightSpeed((bird).getFlightSpeed());
             birdRepo.save(birdEntity);
         });
-
     }
 }
